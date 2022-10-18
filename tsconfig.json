@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "ES2022",
     "target": "es2015",
     "declaration": true,
     "outDir": "./dist",
-    "strict": true
+    "strict": true,
+    "sourceMap": true,
   },
   "include": [
     "src/**/*"
