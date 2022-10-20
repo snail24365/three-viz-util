@@ -5,7 +5,7 @@ import { sleep } from "./util";
 
 test("seek should move cursor to the number", async () => {
     const player = new Player();
-    player.setTotalFrame(5)
+    player.totalFrame = 5;
     player.cursor = 3;
     expect(player.cursor).toBe(3);
 });
@@ -13,7 +13,7 @@ test("seek should move cursor to the number", async () => {
 test("seek out of index throw error", async () => {
     const t = async () => {
         const player = new Player();
-        player.setTotalFrame(5);
+        player.totalFrame = 5;
         player.cursor = 5;
     }
     await expect(t).rejects.toThrow();
@@ -21,14 +21,14 @@ test("seek out of index throw error", async () => {
 
 test("tick move cursor to next fame", async () => {
     const player = new Player();
-    player.setTotalFrame(5)
+    player.totalFrame = 5;
     await player.tick();
     expect(player.cursor).toBe(1)
 });
 
 test("if cursor is at tail, tick doesn't move cursor", async () => {
     const player = new Player();
-    player.setTotalFrame(5);
+    player.totalFrame = 5;
     player.cursor = 4;
     await player.tick();
     expect(player.cursor).toBe(4)
@@ -36,22 +36,22 @@ test("if cursor is at tail, tick doesn't move cursor", async () => {
 
 test("play behavior test", async () => {
     const player = new Player();
-    player.setTotalFrame(10);
+    player.totalFrame = 10;
     await player.play();
     expect(player.cursor).toBe(9)
 });
 
 test("play end behavior test", async () => {
     const player = new Player();
-    player.setTotalFrame(10);
+    player.totalFrame = 10;
     const endType: PlayFinishType = await player.play();
     expect(endType).toBe("finish");
 });
 
 test("play end behavior test2", async () => {
     const player = new Player();
-    player.setTotalFrame(100);
-    player.setFps(100);
+    player.totalFrame = 100;
+    player.fps = 100;
     let endPromise = player.play();
     player.pause();
     let endType: PlayFinishType = await endPromise;
@@ -65,8 +65,9 @@ test("play end behavior test2", async () => {
 test("pause behavior test", async () => {
     const player = new Player();
     const totalFrame = 500;
-    player.setTotalFrame(totalFrame);
-    player.setFps(300);
+    player.totalFrame = totalFrame;
+    player.fps = 300;
+
     const endPromise = player.play();
     setTimeout(() => {
         player.pause();
@@ -79,8 +80,8 @@ test("pause behavior test", async () => {
 test("stop behavior test", async () => {
     const player = new Player();
     const totalFrame = 100;
-    player.setTotalFrame(totalFrame);
-    player.setFps(50);
+    player.totalFrame = totalFrame;
+    player.fps = 50;
     const endPromise = player.play();
     setTimeout(async () => {
         player.stop();
@@ -91,17 +92,17 @@ test("stop behavior test", async () => {
 
 test("play pause stop integrate test", async () => {
     const player = new Player();
-    const totalFrame = 100;
-    player.setTotalFrame(totalFrame);
-    player.setFps(300);
+    const totalFrame = 20;
+    player.totalFrame = totalFrame;
+    player.fps = 500;
 
     player.play();
-    await sleep(10);
+    await sleep(3);
     player.pause();
     expect(player.isCursorAtTail()).toBe(false);
     
     player.play();
-    await sleep(10);
+    await sleep(3);
     player.stop();
     expect(player.isCursorAtTail()).toBe(false);
     
@@ -115,7 +116,7 @@ test("cursor update callback", async () => {
 
     let testVal = 10;
 
-    player.setTotalFrame(totalFrame);
+    player.totalFrame = totalFrame;
     player.addUpdateCallback("test", () => {
         testVal = 20;
     });
@@ -129,7 +130,7 @@ test("cursor update async callback", async () => {
 
     let testVal = 10;
 
-    player.setTotalFrame(totalFrame);
+    player.totalFrame = totalFrame;
     player.addUpdateCallback("test", async () => {
         await sleep(10);
         testVal = 30;
@@ -144,7 +145,7 @@ test("remove cursor update callback", async () => {
 
     let testVal = 10;
 
-    player.setTotalFrame(totalFrame);
+    player.totalFrame = totalFrame;
     player.addUpdateCallback("test", async () => {
         testVal = 30;
     });

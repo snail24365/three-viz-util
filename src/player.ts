@@ -6,24 +6,12 @@ type CallbackMap = {
 
 export default class Player {
     
-    totalFrame: number = -1;
+    _totalFrame: number = -1;
     private _fps: number = 60;
     private _cursor :number = 0;
     playSubscription: NodeJS.Timeout | null = null;
     playFinishResolve: ((value: PlayFinishType) => void) | null = null;
     private cursorUpdateCallbackMap: CallbackMap = {};
-
-    pause() {
-        if (this.playSubscription) {
-            clearTimeout(this.playSubscription);
-        }
-        this.playFinishResolve?.("halt");
-    }
-
-    stop() {
-        this.pause();
-        this.cursor = 0;
-    }
 
     async play():Promise<PlayFinishType> {
         const endPromise = new Promise<PlayFinishType>((resolve) => {
@@ -44,7 +32,42 @@ export default class Player {
         return endPromise;
     }
 
-    public isCursorAtTail() {
+    pause(): void {
+        if (this.playSubscription) {
+            clearTimeout(this.playSubscription);
+        }
+        this.playFinishResolve?.("halt");
+    }
+
+    stop(): void {
+        this.pause();
+        this.cursor = 0;
+    }
+
+
+    async update(): Promise<void> {
+        for (const key in this.cursorUpdateCallbackMap) {
+            await this.cursorUpdateCallbackMap[key]?.(this.cursor);
+        }
+    }
+
+    addUpdateCallback(key: string, func: (frameNo:number, ...args: any[]) => any): void {
+        this.cursorUpdateCallbackMap[key] = func;
+    }
+
+    removeUpdateCallback(key: string): void {
+        this.cursorUpdateCallbackMap[key] = undefined;
+    }
+
+    async tick(): Promise<number> {
+        if (this.cursor < this.totalFrame - 1) {
+            this.cursor += 1;
+            await this.update();
+        }
+        return this.cursor;
+    }
+
+    public isCursorAtTail(): boolean {
         return this.cursor === this.totalFrame - 1;
     }
 
@@ -52,7 +75,7 @@ export default class Player {
         return this._fps;
     }
 
-    setFps(val:number) {
+    set fps(val:number) {
         this._fps = val;
     }
 
@@ -67,32 +90,14 @@ export default class Player {
         this._cursor = frameNo;
     }
 
-    async update() {
-        for (const key in this.cursorUpdateCallbackMap) {
-            await this.cursorUpdateCallbackMap[key]?.(this.cursor);
-        }
+    get totalFrame() {
+        return this._totalFrame;
     }
 
-    addUpdateCallback(key: string, func: (frameNo:number, ...args: any[]) => any) {
-        this.cursorUpdateCallbackMap[key] = func;
-    }
-
-    removeUpdateCallback(key: string) {
-        this.cursorUpdateCallbackMap[key] = undefined;
-    }
-
-    async tick() {
-        if (this.cursor >= this.totalFrame - 1) {
-            return;
-        }
-        this.cursor += 1;
-        await this.update();
-    }
-
-    setTotalFrame(totalFrame: number) {
-        if (totalFrame < 0) {
+    set totalFrame(numFrame: number) {
+        if (numFrame < 0) {
             throw new Error("invalid total frame")
         }
-        this.totalFrame = totalFrame;
+        this._totalFrame = numFrame;
     }
 }
