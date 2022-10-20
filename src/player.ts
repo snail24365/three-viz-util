@@ -6,11 +6,12 @@ type CallbackMap = {
 
 export default class Player {
     
-    _totalFrame: number = -1;
     private _fps: number = 60;
-    private _cursor :number = 0;
-    playSubscription: NodeJS.Timeout | null = null;
-    playFinishResolve: ((value: PlayFinishType) => void) | null = null;
+    private _cursor: number = 0;
+    private _totalFrame: number = -1;
+
+    private playSubscription: NodeJS.Timeout | null = null;
+    private playFinishResolve: ((value: PlayFinishType) => void) | null = null;
     private cursorUpdateCallbackMap: CallbackMap = {};
 
     async play():Promise<PlayFinishType> {
@@ -43,7 +44,6 @@ export default class Player {
         this.pause();
         this.cursor = 0;
     }
-
 
     async update(): Promise<void> {
         for (const key in this.cursorUpdateCallbackMap) {
@@ -90,7 +90,7 @@ export default class Player {
         this._cursor = frameNo;
     }
 
-    get totalFrame() {
+    get totalFrame(): number {
         return this._totalFrame;
     }
 
