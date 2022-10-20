@@ -6,7 +6,7 @@ import { sleep } from "./util";
 test("seek should move cursor to the number", async () => {
     const player = new Player();
     player.setTotalFrame(5)
-    await player.setCursor(3);
+    player.cursor = 3;
     expect(player.cursor).toBe(3);
 });
 
@@ -14,7 +14,7 @@ test("seek out of index throw error", async () => {
     const t = async () => {
         const player = new Player();
         player.setTotalFrame(5);
-        await player.setCursor(5);
+        player.cursor = 5;
     }
     await expect(t).rejects.toThrow();
 });
@@ -29,7 +29,7 @@ test("tick move cursor to next fame", async () => {
 test("if cursor is at tail, tick doesn't move cursor", async () => {
     const player = new Player();
     player.setTotalFrame(5);
-    await player.setCursor(4);
+    player.cursor = 4;
     await player.tick();
     expect(player.cursor).toBe(4)
 });
@@ -58,7 +58,7 @@ test("play end behavior test2", async () => {
     expect(endType).toBe("halt");
 
     endPromise = player.play();
-    await player.stop();
+    player.stop();
     expect(endType).toBe("halt");
 });
 
@@ -83,7 +83,7 @@ test("stop behavior test", async () => {
     player.setFps(50);
     const endPromise = player.play();
     setTimeout(async () => {
-        await player.stop();
+        player.stop();
     }, 10)
     await endPromise;
     expect(player.cursor).toBe(0)
@@ -102,10 +102,53 @@ test("play pause stop integrate test", async () => {
     
     player.play();
     await sleep(10);
-    await player.stop();
+    player.stop();
     expect(player.isCursorAtTail()).toBe(false);
     
     await player.play();
     expect(player.isCursorAtTail()).toBe(true);
+});
 
+test("cursor update callback", async () => {
+    const player = new Player();
+    const totalFrame = 100;
+
+    let testVal = 10;
+
+    player.setTotalFrame(totalFrame);
+    player.addUpdateCallback("test", () => {
+        testVal = 20;
+    });
+    await player.update();
+    expect(testVal).toBe(20);
+});
+
+test("cursor update async callback", async () => {
+    const player = new Player();
+    const totalFrame = 100;
+
+    let testVal = 10;
+
+    player.setTotalFrame(totalFrame);
+    player.addUpdateCallback("test", async () => {
+        await sleep(10);
+        testVal = 30;
+    });
+    await player.update();
+    expect(testVal).toBe(30);
+});
+
+test("remove cursor update callback", async () => {
+    const player = new Player();
+    const totalFrame = 100;
+
+    let testVal = 10;
+
+    player.setTotalFrame(totalFrame);
+    player.addUpdateCallback("test", async () => {
+        testVal = 30;
+    });
+    player.removeUpdateCallback("test");
+    await player.update();
+    expect(testVal).toBe(10);
 });

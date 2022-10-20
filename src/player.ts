@@ -1,7 +1,7 @@
 export type PlayFinishType = "finish" | "halt";
 
 type CallbackMap = {
-    [key : string] : (...args:any[]) => any
+    [key : string] : ((frameNo:number, ...args:any[]) => any) | undefined
 }
 
 export default class Player {
@@ -20,9 +20,9 @@ export default class Player {
         this.playFinishResolve?.("halt");
     }
 
-    async stop() {
+    stop() {
         this.pause();
-        await this.setCursor(0);
+        this.cursor = 0;
     }
 
     async play():Promise<PlayFinishType> {
@@ -60,20 +60,33 @@ export default class Player {
         return this._cursor;
     }
 
-    async setCursor(frameNo: number) {
+    set cursor(frameNo: number) {
         if (frameNo >= this.totalFrame || frameNo < 0) {
             throw new Error("cursor out of bound")
         }
         this._cursor = frameNo;
+    }
+
+    async update() {
         for (const key in this.cursorUpdateCallbackMap) {
-            await this.cursorUpdateCallbackMap[key]();
+            await this.cursorUpdateCallbackMap[key]?.(this.cursor);
         }
     }
 
+    addUpdateCallback(key: string, func: (frameNo:number, ...args: any[]) => any) {
+        this.cursorUpdateCallbackMap[key] = func;
+    }
+
+    removeUpdateCallback(key: string) {
+        this.cursorUpdateCallbackMap[key] = undefined;
+    }
+
     async tick() {
-        if (this.cursor < this.totalFrame - 1) {
-            await this.setCursor(this.cursor + 1);
+        if (this.cursor >= this.totalFrame - 1) {
+            return;
         }
+        this.cursor += 1;
+        await this.update();
     }
 
     setTotalFrame(totalFrame: number) {
