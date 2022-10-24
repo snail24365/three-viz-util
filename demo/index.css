@@ -1,0 +1,29 @@
+header {
+    font-size: 55px;
+}
+
+html {
+    background-color: azure;
+}
+
+body {
+    margin: 0 5rem;
+    padding : 3rem 3rem;
+    background-color: white;
+}
+
+main {
+    margin-top: 1rem;
+}
+
+.grid {
+    display: grid;
+	grid-template-rows: repeat(2, 1fr);
+	grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+}
+
+.grid div {
+    border: 1px solid silver;
+    min-height: 300px;
+}

@@ -1,3 +1,5 @@
+import "./index.css";
+
 import * as THREE from "three";
 import { AmbientLight, DirectionalLight, DirectionalLightHelper, Object3D, Vector3 } from "three";
 import {

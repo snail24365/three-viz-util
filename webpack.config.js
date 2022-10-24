@@ -4,41 +4,54 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  entry: "./demo/index.ts", // 번들링 시작 위치
-  output: {
-    path: path.join(__dirname, "/demo_dist"), // 번들 결과물 위치
-    filename: "bundle.js",
-  },
-  module: {
-    rules: [
-      {
-        test: /[\.js]$/, // .js 에 한하여 babel-loader를 이용하여 transpiling
-        exclude: /node_module/,
-        use: {
-          loader: "babel-loader",
-        },
-      },
-      {
-        test: /\.ts$/, // .ts 에 한하여 ts-loader를 이용하여 transpiling
-        exclude: /node_module/,
-        use: {
-          loader: "ts-loader",
-        },
-      },
+    entry: {
+        index: "./demo/index.ts",
+        frame_object3d: "./demo/frame_object3d.ts"
+    },  // 번들링 시작 위치
+    output: {
+        path: path.join(__dirname, "/demo_dist"), // 번들 결과물 위치
+        filename: "[name].bundle.js",
+    },
+    module: {
+        rules: [{
+                test: /[\.js]$/, // .js 에 한하여 babel-loader를 이용하여 transpiling
+                exclude: /node_module/,
+                use: {
+                    loader: "babel-loader",
+                },
+            },
+            {
+                test: /\.ts$/, // .ts 에 한하여 ts-loader를 이용하여 transpiling
+                exclude: /node_module/,
+                use: {
+                    loader: "ts-loader",
+                },
+            },
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader']
+            }
+        ],
+    },
+    resolve: {
+        modules: [path.join(__dirname, "src"), "node_modules"], // 모듈 위치
+        extensions: [".ts", ".js"],
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            title: "Demo Main",
+            chunks : ['index'],
+            template: "./demo/index.html", // 템플릿 위치
+        }),
+        new HtmlWebpackPlugin({
+            filename: 'frame_object3d.html',
+            chunks: ['frame_object3d'],
+            template: "./demo/frame_object3d.html",
+        }),
     ],
-  },
-  resolve: {
-    modules: [path.join(__dirname, "src"), "node_modules"], // 모듈 위치
-    extensions: [".ts", ".js"],
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: "./demo/index.html", // 템플릿 위치
-    }),
-  ],
-  devServer: {
-    host: "localhost", // live-server host 및 port
-    port: 5500,
-  },
-  mode: "development", // 번들링 모드 development / production
+    devServer: {
+        host: "localhost", // live-server host 및 port
+        port: 5500,
+    },
+    mode: "development", // 번들링 모드 development / production
 };
