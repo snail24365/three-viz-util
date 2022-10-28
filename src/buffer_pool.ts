@@ -1,18 +1,37 @@
-class FiniteBufferPool<T> implements BufferPool<T>{
+type BufferPoolMeta = {
+    totalFrame: number,
+    chunkSize: number,
+}
 
-    constructor() {
+interface Producer<T> {
+    getDataAt(frame: number): T
+    getChunkAt(chunkNo: number): Array<T>
+}
+
+export class BufferPool<T> implements Pool<T>{
+
+    private slot: Array<T> = [];
+
+    constructor(producer:Producer<T>, meta:BufferPoolMeta) {
         
     }
 
-    get(index: number): T {
+    private async getChunk(chunkNo: number): Promise<Array<T>> {
+
+
+        return [];
+    }
+
+    async get(index: number): Promise<T> {
+        if (this.slot[index] !== undefined) {
+            return this.slot[index];
+        }
+        
         throw new Error("Method not implemented.");
     }
 }
 
 
-export interface BufferPool<T> {
-    get(index: number): T;
+export interface Pool<T> {
+    get(index: number): Promise<T>;
 }
-
-// fixed size buffer pool
-// stream buffer pool
