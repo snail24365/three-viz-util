@@ -6,8 +6,15 @@
     "outDir": "./dist",
     "strict": true,
     "sourceMap": true,
+    "esModuleInterop": true
   },
   "include": [
     "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*",
+    "**/dist/**",
+    "**/demo_dist/*",
   ]
 }
