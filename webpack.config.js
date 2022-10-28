@@ -6,7 +6,9 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
     entry: {
         index: "./demo/index.ts",
-        frame_object3d: "./demo/frame_object3d.ts"
+        frame_object3d: "./demo/frame_object3d.ts",
+        geometry_merger: "./demo/geometry_merger.ts",
+        grid_modeler: "./demo/grid_modeler.ts"
     },  // 번들링 시작 위치
     output: {
         path: path.join(__dirname, "/demo_dist"), // 번들 결과물 위치
@@ -48,6 +50,17 @@ module.exports = {
             chunks: ['frame_object3d'],
             template: "./demo/frame_object3d.html",
         }),
+        new HtmlWebpackPlugin({
+            filename: 'geometry_merger.html',
+            chunks: ['geometry_merger'],
+            template: "./demo/geometry_merger.html",
+        }),
+        new HtmlWebpackPlugin({
+            filename: 'grid_modeler.html',
+            chunks: ['grid_modeler'],
+            template: "./demo/grid_modeler.html"
+        }),
+        
     ],
     devServer: {
         host: "localhost", // live-server host 및 port
