@@ -52,19 +52,19 @@ module.exports = {
 
         new webpack.DefinePlugin({
             // Define relative base path in cesium for loading assets
-            CESIUM_BASE_URL: JSON.stringify('')
+            CESIUM_BASE_URL: JSON.stringify('/')
         }),
         new CopyWebpackPlugin({
             patterns: [
-                { from: path.join(cesiumSource, cesiumWorkers), to: 'Workers' },
-                { from: path.join(cesiumSource, 'Assets'), to: 'Assets' },
-                { from: path.join(cesiumSource, 'Widgets'), to: 'Widgets' }
+                { from: path.join(cesiumSource, cesiumWorkers), to: 'static/Workers' },
+                { from: path.join(cesiumSource, 'Assets'), to: 'static/Assets' },
+                { from: path.join(cesiumSource, 'Widgets'), to: 'static/Widgets' }
             ]
         }),
         new HtmlWebpackPlugin({
             title: "Demo Main",
             chunks : ['index'],
-            template: "./demo/index.html", // 템플릿 위치
+            template: "./demo/index.html",
         }),
         new HtmlWebpackPlugin({
             filename: 'frame_object3d.html',
@@ -86,6 +86,7 @@ module.exports = {
     devServer: {
         host: "localhost", // live-server host 및 port
         port: 5500,
+        static: ['demo_dist/static'],
     },
-    mode: "development", // 번들링 모드 development / production
+    mode: "development",
 };

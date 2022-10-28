@@ -5,7 +5,8 @@
     "scripts": {
         "demo": "webpack serve --open",
         "demo_dev_build": "webpack --mode=development",
-        "test": "jest --watch"
+        "test": "jest --watch",
+        "build": "webpack build"
     },
     "keywords": [
         "three.js",
