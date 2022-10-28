@@ -1,7 +1,11 @@
 // webpack.config.js
+const cesiumSource = 'node_modules/cesium/Source';
+const cesiumWorkers = '../Build/Cesium/Workers';
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require('webpack');
 
 module.exports = {
     entry: {
@@ -38,8 +42,25 @@ module.exports = {
     resolve: {
         modules: [path.join(__dirname, "src"), "node_modules"], // 모듈 위치
         extensions: [".ts", ".js"],
+        fallback: {
+            "https": false, "zlib": false, "http": false, "url": false,
+            path: require.resolve('path-browserify'),
+        },
+        // mainFiles: ['index', 'Cesium']
     },
     plugins: [
+
+        new webpack.DefinePlugin({
+            // Define relative base path in cesium for loading assets
+            CESIUM_BASE_URL: JSON.stringify('')
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+                { from: path.join(cesiumSource, cesiumWorkers), to: 'Workers' },
+                { from: path.join(cesiumSource, 'Assets'), to: 'Assets' },
+                { from: path.join(cesiumSource, 'Widgets'), to: 'Widgets' }
+            ]
+        }),
         new HtmlWebpackPlugin({
             title: "Demo Main",
             chunks : ['index'],
